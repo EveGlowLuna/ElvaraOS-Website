@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import elvaraImg from '@/assets/elvara.png'
+import elvaraImg from '@/assets/elvara.webp'
 
 const year = new Date().getFullYear()
 </script>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import elvaraImg from '@/assets/elvara.png'
+import elvaraImg from '@/assets/elvara.webp'
 import { GITHUB_REPO_URL } from '@/config'
 
 const router = useRouter()

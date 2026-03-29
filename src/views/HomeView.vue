@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import osifImg from '@/assets/osif.png'
+import osifImg from '@/assets/osif.webp'
 
 const animDone = ref(false)
 const phase = ref<'idle' | 'running' | 'done'>('idle')
