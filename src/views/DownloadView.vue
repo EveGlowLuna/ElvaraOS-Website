@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
+import { marked } from 'marked'
 import { DOWNLOAD_BASE_URL, GITHUB_REPO_URL } from '@/config'
 
-const version = ref('')      // e.g. "1.0"
-const changelog = ref('')    // 第三行起的日志内容
+const version = ref('')
+const changelogHtml = ref('')
 
 onMounted(async () => {
   try {
@@ -11,12 +12,12 @@ onMounted(async () => {
     const text = await res.text()
     const lines = text.split('\n')
 
-    // 第一行格式：# v1.0  →  取 v 后面的部分
     const match = lines[0].match(/^#\s*v(.+)/)
     if (match) version.value = match[1].trim()
 
-    // 第三行到最后
-    changelog.value = lines.slice(2).join('\n').trim()
+    // 第三行起解析为 HTML
+    const md = lines.slice(2).join('\n').trim()
+    changelogHtml.value = await marked.parse(md)
   } catch (e) {
     console.error('Failed to load publish_info.md', e)
   }
@@ -35,11 +36,7 @@ const isoUrl = computed(
       <!-- 左：版本 + 日志 -->
       <div class="card-info">
         <div class="version-badge" v-if="version">v{{ version }}</div>
-        <div class="changelog" v-if="changelog">
-          <p v-for="(line, i) in changelog.split('\n')" :key="i" class="log-line">
-            {{ line }}
-          </p>
-        </div>
+        <div class="changelog" v-if="changelogHtml" v-html="changelogHtml"></div>
         <div v-if="!version" class="loading">加载中…</div>
       </div>
 
@@ -150,14 +147,36 @@ const isoUrl = computed(
   display: flex;
   flex-direction: column;
   gap: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.92rem;
+  line-height: 1.7;
 }
 
-.log-line {
-  font-size: 0.92rem;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.7;
+.changelog :deep(h2) {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 8px 0 4px;
+}
+
+.changelog :deep(ul) {
+  padding-left: 1.2em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.changelog :deep(li) {
+  list-style: disc;
+}
+
+.changelog :deep(strong) {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+}
+
+.changelog :deep(p) {
   margin: 0;
-  white-space: pre-wrap;
 }
 
 .loading {
