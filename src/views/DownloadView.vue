@@ -102,6 +102,25 @@ const isoUrl = computed(
   overflow: hidden;
 }
 
+@media (max-width: 640px) {
+  .download-page {
+    padding: 48px 16px 60px;
+  }
+  .card {
+    flex-direction: column;
+    border-radius: 16px;
+  }
+  .card-info {
+    border-right: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 28px 20px;
+  }
+  .card-actions {
+    width: 100%;
+    padding: 24px 20px;
+  }
+}
+
 /* 左侧：版本 + 日志 */
 .card-info {
   flex: 1;

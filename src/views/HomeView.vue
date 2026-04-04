@@ -4,15 +4,16 @@ import osifImg from '@/assets/osif.webp'
 
 const animDone = ref(false)
 const phase = ref<'idle' | 'running' | 'done'>('idle')
-
-// 四条特性的可见状态
 const featureVisible = ref([false, false, false, false])
+
+const heroImgRef = ref<HTMLImageElement | null>(null)
+const glowRingRef = ref<HTMLDivElement | null>(null)
 
 const features = [
   {
     icon: '🛠️',
     title: '现代化安装体验',
-    desc: '基于 ArchInstall 深度定制的图形安装程序，告别繁琐的命令行配置。友好的交互界面引导你完成每一步，让 Arch Linux 的安装不再是门槛。',
+    desc: '受 ArchInsstall 启发开发的图形安装程序，告别繁琐的命令行配置。友好的交互界面引导你完成每一步，让 Arch Linux 的安装不再是门槛。',
   },
   {
     icon: '📦',
@@ -21,8 +22,8 @@ const features = [
   },
   {
     icon: '🛒',
-    title: '丰富的软件生态',
-    desc: '内置星火应用商店，覆盖国内主流软件，一键安装无需折腾。同时自动配置 yay，AUR 数万个软件包触手可及，Arch 的软件自由度完整保留。',
+    title: '始终保持最新',
+    desc: '你的电脑不应该被升级束缚。得益于 Arch Linux 的滚动更新，随时运行sudo pacman -Syu即可更新，没有烦人的更新提醒。',
   },
   {
     icon: '🧰',
@@ -30,6 +31,20 @@ const features = [
     desc: '随附 Arch 工具箱，提供镜像源切换、系统滚动更新等常用功能，操作可视化、结果即时反馈。即便是 Linux 新手，也能轻松维护自己的系统。',
   },
 ]
+
+function syncGlow() {
+  const img = heroImgRef.value
+  const ring = glowRingRef.value
+  if (!img || !ring) return
+  const { offsetWidth: w, offsetHeight: h, offsetLeft: l, offsetTop: t } = img
+  const inset = 18
+  ring.style.width = `${w + inset * 2}px`
+  ring.style.height = `${h + inset * 2}px`
+  ring.style.left = `${l - inset}px`
+  ring.style.top = `${t - inset}px`
+}
+
+let ro: ResizeObserver | null = null
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
@@ -44,10 +59,20 @@ onMounted(() => {
       }, 600)
     }, 1400)
   }, 200)
+
+  // 图片加载完后同步，并监听窗口 resize
+  const img = heroImgRef.value
+  if (img) {
+    if (img.complete) syncGlow()
+    else img.addEventListener('load', syncGlow)
+  }
+  ro = new ResizeObserver(syncGlow)
+  if (img) ro.observe(img)
 })
 
 onUnmounted(() => {
   document.body.style.overflow = ''
+  ro?.disconnect()
 })
 
 function setupFeatureObserver() {
@@ -57,7 +82,6 @@ function setupFeatureObserver() {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const idx = Number((entry.target as HTMLElement).dataset.index)
-          // 依次延迟
           setTimeout(() => { featureVisible.value[idx] = true }, idx * 150)
           observer.unobserve(entry.target)
         }
@@ -88,8 +112,8 @@ function setupFeatureObserver() {
 
       <!-- 图片 + 光晕包裹层 -->
       <div class="img-glow-wrap" :class="{ visible: phase === 'running' || phase === 'done' }">
-        <div class="glow-ring" :class="{ active: phase === 'running' || phase === 'done' }"></div>
-        <img :src="osifImg" alt="ElvaraOS" class="hero-img" />
+        <div class="glow-ring" ref="glowRingRef" :class="{ active: phase === 'running' || phase === 'done' }"></div>
+        <img :src="osifImg" alt="ElvaraOS" class="hero-img" ref="heroImgRef" />
       </div>
 
       <!-- 按钮 -->
@@ -176,11 +200,11 @@ function setupFeatureObserver() {
   background-clip: text;
 }
 
-/* 图片包裹：flex:1 吃掉剩余高度，宽度自适应 */
+/* 图片 + 光晕：flex:1 撑满剩余高度，position:relative 作为光圈的定位基准 */
 .img-glow-wrap {
   position: relative;
   flex: 1;
-  min-height: 0;          /* 关键：允许 flex 子项收缩 */
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -193,7 +217,7 @@ function setupFeatureObserver() {
   filter: blur(0);
 }
 
-/* 图片：高度填满父容器，宽度自适应；初始缩小用 transform 不影响布局 */
+/* 图片：高度撑满容器，宽度自适应，跟随窗口缩放 */
 .hero-img {
   position: relative;
   z-index: 2;
@@ -209,10 +233,19 @@ function setupFeatureObserver() {
   transform: scale(1);
 }
 
-/* 动态彩虹光晕 */
+/* 竖屏：图片改为宽度驱动，限制高度防止撑满屏幕 */
+@media (orientation: portrait) {
+  .hero-img {
+    width: 90vw;
+    height: auto;
+    max-width: 90vw;
+    max-height: 55vh;
+  }
+}
+
+/* 动态彩虹光晕：JS 控制 width/height/left/top，精确贴合图片渲染尺寸 */
 .glow-ring {
   position: absolute;
-  inset: -18px;
   z-index: 1;
   border-radius: 18px;
   opacity: 0;
@@ -322,5 +355,22 @@ function setupFeatureObserver() {
   line-height: 1.8;
   max-width: 680px;
   margin: 0;
+}
+
+@media (max-width: 640px) {
+  .features {
+    padding: 48px 20px 80px;
+  }
+  .feature-card {
+    padding: 36px 0;
+    gap: 12px;
+  }
+  .hero-buttons {
+    gap: 12px;
+  }
+  .btn {
+    padding: 11px 28px;
+    font-size: 14px;
+  }
 }
 </style>

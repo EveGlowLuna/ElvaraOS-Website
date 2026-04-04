@@ -23,10 +23,20 @@ const year = new Date().getFullYear()
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
   padding: 20px 28px;
   font-size: 13px;
   color: rgba(255, 255, 255, 0.5);
   flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px 20px;
+  }
 }
 
 .footer-left {
