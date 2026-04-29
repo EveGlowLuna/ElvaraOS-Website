@@ -1,8 +1,8 @@
-# v1.3
+# v2.0
 
 ## 主要更新内容
-- 修复ElvaraInstaller不能用的问题。
-- (实验性)修复ElvaraInstaller支持BIOS安装。
-- 修复终端的ElvaraInstaller可用并提供TTY支持。
-- 修复插件可用性，将所有插件改为系统插件。
-- 修复ElvaraOSTools打包，确保其生成单文件。
+- 切换桌面环境为Cinnamon。
+- 可在安装器自行选择需要的桌面环境。感谢 [SHORiN-KiWATA/shorin-arch-setup](https://github.com/SHORiN-KiWATA/shorin-arch-setup) 仓库。
+
+## 注意
+最新版与旧版安装器均会安装最新版本的软件。现有镜像仓库只维护最新的两个版本。
