@@ -1,13 +1,34 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
-import osifImg from '@/assets/osif.webp'
+import elvaraLogo from '@/assets/elvara.webp'
 
 const animDone = ref(false)
 const phase = ref<'idle' | 'running' | 'done'>('idle')
 const featureVisible = ref([false, false, false, false])
 
-const heroImgRef = ref<HTMLImageElement | null>(null)
-const glowRingRef = ref<HTMLDivElement | null>(null)
+interface DesktopEnv {
+  id: string
+  name: string
+  desc: string
+  gradient: string
+  initials: string
+}
+
+const desktopEnvs: DesktopEnv[] = [
+  { id: 'kde',          name: 'KDE Plasma',           desc: '成熟完善的桌面环境',                gradient: 'linear-gradient(135deg, #4da9f7, #2563eb)', initials: 'KD' },
+  { id: 'gnome',        name: 'GNOME',                desc: '简洁现代的桌面环境',                gradient: 'linear-gradient(135deg, #e8a838, #d97706)', initials: 'GN' },
+  { id: 'shorinniri',   name: 'Shorin Niri',          desc: 'Shorin 定制版 Niri 平铺式桌面',     gradient: 'linear-gradient(135deg, #7c3aed, #5b21b6)', initials: 'SN' },
+  { id: 'minimalniri',  name: '极简版 Niri',           desc: '轻量级 Niri 平铺桌面',             gradient: 'linear-gradient(135deg, #a78bfa, #7c3aed)', initials: 'JN' },
+  { id: 'minimallabwc', name: '极简版 Labwc',          desc: '轻量级 Labwc 堆叠桌面',            gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', initials: 'JL' },
+  { id: 'end4',         name: 'End4 Quickshell',      desc: 'End4 风格 Quickshell 桌面',        gradient: 'linear-gradient(135deg, #ec4899, #db2777)', initials: 'E4' },
+  { id: 'dms',          name: 'DMS Quickshell',       desc: 'DMS 风格 Quickshell 桌面',         gradient: 'linear-gradient(135deg, #14b8a6, #0d9488)', initials: 'DM' },
+  { id: 'caelestia',    name: 'Caelestia Quickshell', desc: 'Caelestia 风格 Quickshell 桌面',   gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)', initials: 'CA' },
+  { id: 'inir',         name: 'Inir Quickshell',      desc: 'Inir 风格 Quickshell 桌面',        gradient: 'linear-gradient(135deg, #f97316, #ea580c)', initials: 'IN' },
+  { id: 'shorindms',    name: 'Shorin DMS',           desc: 'Shorin 定制 DMS 桌面',             gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', initials: 'SD' },
+  { id: 'shorinnocniri',name: 'Shorin Noctalia',      desc: 'Shorin Noctalia 定制桌面',         gradient: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', initials: 'NO' },
+  { id: 'hyprniri',     name: 'Shorin HyprNiri',      desc: 'HyprNiri 混合平铺桌面',            gradient: 'linear-gradient(135deg, #d946ef, #c026d3)', initials: 'HN' },
+  { id: 'none',         name: '仅基础系统',             desc: '不安装桌面环境',                   gradient: 'linear-gradient(135deg, #6b7280, #4b5563)', initials: '--' },
+]
 
 const features = [
   {
@@ -18,7 +39,7 @@ const features = [
   {
     icon: '📦',
     title: '真正的开箱即用',
-    desc: '预装中文输入法与精选 GNOME 插件，系统装好即可上手。借助 GNOME 强大的扩展生态，你可以随时按需调整桌面，打造专属工作流。',
+    desc: '基于SHORiN-KiWATA/shorin-arch-setup仓库打造的开箱即用的桌面环境，可在安装时随意选择想要的桌面环境。',
   },
   {
     icon: '🛒',
@@ -28,23 +49,9 @@ const features = [
   {
     icon: '🧰',
     title: '内置运维工具箱',
-    desc: '随附 Arch 工具箱，提供镜像源切换、系统滚动更新等常用功能，操作可视化、结果即时反馈。即便是 Linux 新手，也能轻松维护自己的系统。',
+    desc: '随附 Arch 工具箱，提供镜像源切换等常用功能，操作可视化、结果即时反馈。即便是 Linux 新手，也能轻松维护自己的系统。',
   },
 ]
-
-function syncGlow() {
-  const img = heroImgRef.value
-  const ring = glowRingRef.value
-  if (!img || !ring) return
-  const { offsetWidth: w, offsetHeight: h, offsetLeft: l, offsetTop: t } = img
-  const inset = 18
-  ring.style.width = `${w + inset * 2}px`
-  ring.style.height = `${h + inset * 2}px`
-  ring.style.left = `${l - inset}px`
-  ring.style.top = `${t - inset}px`
-}
-
-let ro: ResizeObserver | null = null
 
 onMounted(() => {
   document.body.style.overflow = 'hidden'
@@ -59,20 +66,10 @@ onMounted(() => {
       }, 600)
     }, 1400)
   }, 200)
-
-  // 图片加载完后同步，并监听窗口 resize
-  const img = heroImgRef.value
-  if (img) {
-    if (img.complete) syncGlow()
-    else img.addEventListener('load', syncGlow)
-  }
-  ro = new ResizeObserver(syncGlow)
-  if (img) ro.observe(img)
 })
 
 onUnmounted(() => {
   document.body.style.overflow = ''
-  ro?.disconnect()
 })
 
 function setupFeatureObserver() {
@@ -94,32 +91,45 @@ function setupFeatureObserver() {
 </script>
 
 <template>
-  <!-- hero 区域：占导航栏以下的整个视口高度 -->
   <section class="hero" :class="{ 'scroll-locked': phase !== 'done' }">
 
-    <!-- 动态彩虹光晕：绝对定位，跟图片同层同尺寸 -->
     <div
       class="rainbow-glow"
       :class="{ active: phase === 'running' || phase === 'done' }"
     ></div>
 
     <div class="hero-center">
-      <!-- 文字上浮 -->
+      <div class="hero-logo" :class="{ visible: phase === 'running' || phase === 'done' }">
+        <img :src="elvaraLogo" alt="ElvaraOS" />
+      </div>
+
       <div class="hero-text" :class="{ visible: phase === 'running' || phase === 'done' }">
         <h1>ElvaraOS</h1>
         <p>一个开箱即用的 Arch Linux 发行版</p>
       </div>
 
-      <!-- 图片 + 光晕包裹层 -->
-      <div class="img-glow-wrap" :class="{ visible: phase === 'running' || phase === 'done' }">
-        <div class="glow-ring" ref="glowRingRef" :class="{ active: phase === 'running' || phase === 'done' }"></div>
-        <img :src="osifImg" alt="ElvaraOS" class="hero-img" ref="heroImgRef" />
-      </div>
-
-      <!-- 按钮 -->
       <div class="hero-buttons" :class="{ visible: animDone }">
         <a href="/download" class="btn btn-primary">下载</a>
         <a href="/docs" class="btn btn-secondary">文档</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="desktop-envs">
+    <h2 class="section-title">支持的桌面环境</h2>
+    <p class="section-subtitle">安装时可从以下 13 种环境中自由选择</p>
+    <div class="envs-grid">
+      <div
+        v-for="env in desktopEnvs"
+        :key="env.id"
+        class="env-card"
+        :class="{ muted: env.id === 'none' }"
+      >
+        <div class="env-icon" :style="{ background: env.gradient }">{{ env.initials }}</div>
+        <div class="env-body">
+          <span class="env-name">{{ env.name }}</span>
+          <span class="env-desc">{{ env.desc }}</span>
+        </div>
       </div>
     </div>
   </section>
@@ -155,7 +165,20 @@ function setupFeatureObserver() {
   overflow: hidden;
 }
 
-/* 居中容器：纵向 flex，图片区域 flex:1 吃掉剩余空间 */
+/* 背景彩虹光晕 */
+.rainbow-glow {
+  position: absolute;
+  inset: -60px -60px;
+  z-index: 0;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 40%, rgba(42, 109, 217, 0.08) 0%, rgba(123, 47, 255, 0.05) 30%, transparent 70%);
+  transition: opacity 1.5s ease 0.3s;
+  pointer-events: none;
+}
+.rainbow-glow.active {
+  opacity: 1;
+}
+
 .hero-center {
   display: flex;
   flex-direction: column;
@@ -168,7 +191,6 @@ function setupFeatureObserver() {
   box-sizing: border-box;
 }
 
-/* 文字：固定自然高度 */
 .hero-text {
   flex-shrink: 0;
   text-align: center;
@@ -200,76 +222,29 @@ function setupFeatureObserver() {
   background-clip: text;
 }
 
-/* 图片 + 光晕：flex:1 撑满剩余高度，position:relative 作为光圈的定位基准 */
-.img-glow-wrap {
-  position: relative;
-  flex: 1;
-  min-height: 0;
+.hero-logo {
   display: flex;
   align-items: center;
   justify-content: center;
   opacity: 0;
   filter: blur(20px);
-  transition: opacity 1.2s ease 0.1s, filter 1.2s ease 0.1s;
+  transform: scale(0.7);
+  transition: opacity 1.2s ease 0.1s, filter 1.2s ease 0.1s, transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
 }
-.img-glow-wrap.visible {
+.hero-logo.visible {
   opacity: 1;
   filter: blur(0);
+  transform: scale(1);
 }
-
-/* 图片：高度撑满容器，宽度自适应，跟随窗口缩放 */
-.hero-img {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-  width: auto;
-  max-width: 90vw;
+.hero-logo img {
   display: block;
-  border-radius: 12px;
-  transform: scale(0.72);
-  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
-}
-.img-glow-wrap.visible .hero-img {
-  transform: scale(1);
-}
-
-/* 竖屏：图片改为宽度驱动，限制高度防止撑满屏幕 */
-@media (orientation: portrait) {
-  .hero-img {
-    width: 90vw;
-    height: auto;
-    max-width: 90vw;
-    max-height: 55vh;
-  }
+  width: auto;
+  height: clamp(120px, 28vh, 320px);
+  max-width: 80vw;
+  object-fit: contain;
+  filter: drop-shadow(0 0 40px rgba(42, 109, 217, 0.3));
 }
 
-/* 动态彩虹光晕：JS 控制 width/height/left/top，精确贴合图片渲染尺寸 */
-.glow-ring {
-  position: absolute;
-  z-index: 1;
-  border-radius: 18px;
-  opacity: 0;
-  transform: scale(0.85);
-  background: conic-gradient(
-    from 0deg,
-    #ff0066, #ff6b00, #ffe600,
-    #00ff88, #00cfff, #7b2fff, #ff0066
-  );
-  filter: blur(22px);
-  transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
-}
-.glow-ring.active {
-  opacity: 0.85;
-  transform: scale(1);
-  animation: rainbow-spin 4s linear infinite;
-}
-
-@keyframes rainbow-spin {
-  from { filter: blur(22px) hue-rotate(0deg); }
-  to   { filter: blur(22px) hue-rotate(360deg); }
-}
-
-/* 按钮：固定自然高度 */
 .hero-buttons {
   flex-shrink: 0;
   display: flex;
@@ -314,6 +289,92 @@ function setupFeatureObserver() {
   color: #fff;
 }
 
+/* ── 桌面环境区域 ── */
+.desktop-envs {
+  background: #000;
+  padding: 80px 48px 100px;
+  text-align: center;
+}
+
+.section-title {
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px;
+}
+
+.section-subtitle {
+  font-size: clamp(0.9rem, 1.4vw, 1.05rem);
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 48px;
+}
+
+.envs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+.env-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  text-align: left;
+}
+.env-card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+.env-card.muted {
+  opacity: 0.5;
+}
+
+.env-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.env-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.env-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.env-desc {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.4);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Features 区域 ── */
 .features {
   background: #000;
   padding: 80px 48px 120px;
@@ -358,6 +419,28 @@ function setupFeatureObserver() {
 }
 
 @media (max-width: 640px) {
+  .desktop-envs {
+    padding: 48px 20px 60px;
+  }
+  .envs-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+  }
+  .env-card {
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  .env-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 11px;
+  }
+  .env-name {
+    font-size: 13px;
+  }
+  .env-desc {
+    font-size: 11px;
+  }
   .features {
     padding: 48px 20px 80px;
   }
