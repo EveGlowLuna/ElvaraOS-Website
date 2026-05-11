@@ -10,24 +10,22 @@ interface DesktopEnv {
   id: string
   name: string
   desc: string
-  gradient: string
-  initials: string
 }
 
 const desktopEnvs: DesktopEnv[] = [
-  { id: 'kde',          name: 'KDE Plasma',           desc: '成熟完善的桌面环境',                gradient: 'linear-gradient(135deg, #4da9f7, #2563eb)', initials: 'KD' },
-  { id: 'gnome',        name: 'GNOME',                desc: '简洁现代的桌面环境',                gradient: 'linear-gradient(135deg, #e8a838, #d97706)', initials: 'GN' },
-  { id: 'shorinniri',   name: 'Shorin Niri',          desc: 'Shorin 定制版 Niri 平铺式桌面',     gradient: 'linear-gradient(135deg, #7c3aed, #5b21b6)', initials: 'SN' },
-  { id: 'minimalniri',  name: '极简版 Niri',           desc: '轻量级 Niri 平铺桌面',             gradient: 'linear-gradient(135deg, #a78bfa, #7c3aed)', initials: 'JN' },
-  { id: 'minimallabwc', name: '极简版 Labwc',          desc: '轻量级 Labwc 堆叠桌面',            gradient: 'linear-gradient(135deg, #f59e0b, #d97706)', initials: 'JL' },
-  { id: 'end4',         name: 'End4 Quickshell',      desc: 'End4 风格 Quickshell 桌面',        gradient: 'linear-gradient(135deg, #ec4899, #db2777)', initials: 'E4' },
-  { id: 'dms',          name: 'DMS Quickshell',       desc: 'DMS 风格 Quickshell 桌面',         gradient: 'linear-gradient(135deg, #14b8a6, #0d9488)', initials: 'DM' },
-  { id: 'caelestia',    name: 'Caelestia Quickshell', desc: 'Caelestia 风格 Quickshell 桌面',   gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)', initials: 'CA' },
-  { id: 'inir',         name: 'Inir Quickshell',      desc: 'Inir 风格 Quickshell 桌面',        gradient: 'linear-gradient(135deg, #f97316, #ea580c)', initials: 'IN' },
-  { id: 'shorindms',    name: 'Shorin DMS',           desc: 'Shorin 定制 DMS 桌面',             gradient: 'linear-gradient(135deg, #06b6d4, #0891b2)', initials: 'SD' },
-  { id: 'shorinnocniri',name: 'Shorin Noctalia',      desc: 'Shorin Noctalia 定制桌面',         gradient: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', initials: 'NO' },
-  { id: 'hyprniri',     name: 'Shorin HyprNiri',      desc: 'HyprNiri 混合平铺桌面',            gradient: 'linear-gradient(135deg, #d946ef, #c026d3)', initials: 'HN' },
-  { id: 'none',         name: '仅基础系统',             desc: '不安装桌面环境',                   gradient: 'linear-gradient(135deg, #6b7280, #4b5563)', initials: '--' },
+  { id: 'kde',          name: 'KDE Plasma',           desc: '成熟完善的桌面环境' },
+  { id: 'gnome',        name: 'GNOME',                desc: '简洁现代的桌面环境' },
+  { id: 'shorinniri',   name: 'Shorin Niri',          desc: 'Shorin 定制版 Niri 平铺式桌面' },
+  { id: 'minimalniri',  name: '极简版 Niri',           desc: '轻量级 Niri 平铺桌面' },
+  { id: 'minimallabwc', name: '极简版 Labwc',          desc: '轻量级 Labwc 堆叠桌面' },
+  { id: 'end4',         name: 'End4 Quickshell',      desc: 'End4 风格 Quickshell 桌面' },
+  { id: 'dms',          name: 'DMS Quickshell',       desc: 'DMS 风格 Quickshell 桌面' },
+  { id: 'caelestia',    name: 'Caelestia Quickshell', desc: 'Caelestia 风格 Quickshell 桌面' },
+  { id: 'inir',         name: 'Inir Quickshell',      desc: 'Inir 风格 Quickshell 桌面' },
+  { id: 'shorindms',    name: 'Shorin DMS',           desc: 'Shorin 定制 DMS 桌面' },
+  { id: 'shorinnocniri',name: 'Shorin Noctalia',      desc: 'Shorin Noctalia 定制桌面' },
+  { id: 'hyprniri',     name: 'Shorin HyprNiri',      desc: 'HyprNiri 混合平铺桌面' },
+  { id: 'none',         name: '仅基础系统',             desc: '不安装桌面环境' },
 ]
 
 const features = [
@@ -125,11 +123,8 @@ function setupFeatureObserver() {
         class="env-card"
         :class="{ muted: env.id === 'none' }"
       >
-        <div class="env-icon" :style="{ background: env.gradient }">{{ env.initials }}</div>
-        <div class="env-body">
-          <span class="env-name">{{ env.name }}</span>
-          <span class="env-desc">{{ env.desc }}</span>
-        </div>
+        <span class="env-name">{{ env.name }}</span>
+        <span class="env-desc">{{ env.desc }}</span>
       </div>
     </div>
   </section>
@@ -319,14 +314,14 @@ function setupFeatureObserver() {
 
 .env-card {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 18px 20px;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 24px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   transition: background 0.2s, border-color 0.2s, transform 0.2s;
-  text-align: left;
+  text-align: center;
 }
 .env-card:hover {
   background: rgba(255, 255, 255, 0.06);
@@ -337,41 +332,15 @@ function setupFeatureObserver() {
   opacity: 0.5;
 }
 
-.env-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 13px;
-  font-weight: 700;
-  color: #fff;
-  flex-shrink: 0;
-}
-
-.env-body {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
 .env-name {
   font-size: 14px;
   font-weight: 600;
   color: #fff;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .env-desc {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.4);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* ── Features 区域 ── */
@@ -427,13 +396,8 @@ function setupFeatureObserver() {
     gap: 10px;
   }
   .env-card {
-    padding: 14px 16px;
-    gap: 12px;
-  }
-  .env-icon {
-    width: 34px;
-    height: 34px;
-    font-size: 11px;
+    padding: 16px 18px;
+    gap: 3px;
   }
   .env-name {
     font-size: 13px;

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import { marked } from 'marked'
+import markedAlert from 'marked-alert'
+
+marked.use(markedAlert())
 import { DOWNLOAD_BASE_URL, GITHUB_REPO_URL } from '@/config'
 
 const version = ref('')
@@ -177,6 +180,36 @@ const isoUrl = computed(
 
 .changelog :deep(p) {
   margin: 0;
+}
+
+.changelog :deep(.markdown-alert) {
+  margin: 16px 0;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: rgba(255, 183, 0, 0.08);
+  border: 1px solid rgba(255, 183, 0, 0.2);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.changelog :deep(.markdown-alert p) {
+  margin: 0;
+}
+
+.changelog :deep(.markdown-alert-title) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: rgba(255, 183, 0, 0.9);
+}
+
+.changelog :deep(.markdown-alert-title svg) {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+  flex-shrink: 0;
 }
 
 .loading {
